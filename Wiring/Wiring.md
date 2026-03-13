@@ -19,3 +19,4 @@
 - Magnetic 240v Power Switch
 - Double 240v Power Point x2
 - YB-550 9w 240v submersible pump 600L/h
+- Dell OptiPlex 780 with Parallel port

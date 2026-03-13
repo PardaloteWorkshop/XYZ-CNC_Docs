@@ -1,186 +1,114 @@
-# Wiring
+# Wiring Overview
 
-Overview of all wiring in the CNC system — control box, motion, spindle, and safety circuits.
-
----
-
-## Component List
-
-| Component | Details |
-|-----------|---------|
-| 48V Power Supply | 8.3A, set to 40.5V |
-| DC-DC Buck Converter (x2) | LM2596HVS — one set to 12V, one set to 24V |
-| Stepper Driver | Gecko G540 4-axis |
-| Stepper Motors | NEMA23 x4 |
-| VFD | Huanyang HY02D223B — 2.2kW, single phase 240V input |
-| Spindle | 2.2kW water-cooled, 80mm, ER20 collet |
-| Spindle Relay | FOTEK SSR-25 DA (solid state relay) |
-| Control Relay | 2PDT 5A, 24V DC coil |
-| EMI Filter | Yunpen YG10T5 |
-| Mains Contactor | 240V contactor |
-| Limit/Home Switches | Inductive x4 |
-| Fans (enclosure) | 12V 120mm x2 |
-| Fans (stepper cooling) | 12V 60mm x3 |
-| E-Stop | Mushroom button x2 |
-| Mains Switch | Magnetic 240V power switch |
-| Power Points | Double 240V GPO x2 |
-| Coolant Pump | YB-550 9W 240V submersible, 600L/h |
-| Control PC | Dell OptiPlex 780, parallel port |
+## Components
+- 48V 8.3A Power Supply (set to 40.5V)
+- 2.2kW Huanyang HY02D223B VFD
+- 2.2kW Water-cooled spindle
+- Gecko G540 4-axis stepper driver
+- NEMA23 stepper motors ×4
+- LM2596HVS DC-DC converter (set to 12V)
+- LM2596HVS DC-DC converter (set to 24V)
+- FOTEK SSR-25 DA solid state relay
+- 2PDT 5A relay, 24V DC coil
+- Yunpen EMI filter YG10T5
+- 240V contactor
+- Inductive limit/home switches ×4
+- 12V 120mm fans ×2 (enclosure)
+- 12V 60mm fans ×3 (stepper cooling)
+- E-Stop switches ×2
+- Magnetic 240V power switch
+- Double 240V GPO ×2
+- YB-550 9W 240V submersible pump 600L/h
+- Dell OptiPlex 780 with parallel port
 
 ---
 
-## Power Distribution Overview
+## Gecko G540 — Parallel Port Pin Assignment
 
-```
-240V Mains
-├── Magnetic switch → Yunpen EMI filter → 240V contactor
-│   ├── Huanyang VFD (spindle)
-│   ├── Coolant pump (YB-550)
-│   └── 240V GPOs (PC, accessories)
-│
-└── 48V PSU (set to 40.5V)
-    ├── Gecko G540 (motion)
-    ├── LM2596HVS → 12V (fans, switches)
-    └── LM2596HVS → 24V (relay coil, control signals)
-```
+The G540 uses a DB25 parallel port connection. Pin assignments are confirmed from
+the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 
----
+### Motor Step/Dir Outputs (DB25 Pins 2–9)
 
-## Gecko G540
+| DB25 Pin | Signal | Notes |
+|----------|--------|-------|
+| 2 | X Step | |
+| 3 | X Dir | |
+| 4 | Y Step | |
+| 5 | Y Dir | |
+| 6 | Z Step | |
+| 7 | Z Dir | |
+| 8 | A Step | A slaved to X — second X gantry motor |
+| 9 | A Dir | |
 
-The G540 receives step/direction signals from the PC parallel port (DB25) via Mach3. The charge pump signal must be active (Mach3 running) for the drives to enable.
+### Input Signals
 
-- Input voltage: 18–50V DC (running at 40.5V)
-- Max current per axis: 3.5A
-- Microstepping: fixed 10x
-- Current set resistor: `R = 47kΩ × (Motor current A / 3.5)`
-- Fault LED: red indicator on front panel
+| DB25 Pin | Mach3 Signal | Active | Notes |
+|----------|-------------|--------|-------|
+| 10 | E-Stop / Limits | Low | G540 fault input — e-stops and limit switches wired into this line |
+| 11 | _[confirm]_ | Low | |
+| 12 | _[confirm]_ | Low | |
+| 13 | _[confirm]_ | Low | |
+| 15 | Probe (Z zero) | **High** | Touch plate / tool length sensor |
 
-### Parallel Port Pin Assignments
+> Pin 10 is the G540's combined fault input. E-stop switches and limit/home switches
+> are wired in series into this single line. The G540 halts all motion on any fault.
 
-| Axis | Step Pin | Dir Pin |
-|------|----------|---------|
-| X | _[ ]_ | _[ ]_ |
-| Y | _[ ]_ | _[ ]_ |
-| Z | _[ ]_ | _[ ]_ |
-| A | _[ ]_ | _[ ]_ |
+### Output Signals
 
-### Input Pins
+| DB25 Pin | Mach3 Output | Signal | Notes |
+|----------|-------------|--------|-------|
+| 16 | Output 13 | _[confirm]_ | |
+| 17 | Output 7 | Spindle on/off | Drives relay → VFD FOR terminal |
+| 1 | Output 8 | _(unused)_ | Flood output — not connected |
 
-| Signal | Pin | Active Low | Notes |
-|--------|-----|------------|-------|
-| E-Stop | _[ ]_ | Yes | NC loop — both buttons in series |
-| X Home/Limit | _[ ]_ | _[ ]_ | Inductive switch |
-| Y Home/Limit | _[ ]_ | _[ ]_ | Inductive switch |
-| Z Home/Limit | _[ ]_ | _[ ]_ | Inductive switch |
-| Charge pump | _[ ]_ | — | Required for drive enable |
-
-### Output Pins
-
-| Signal | Pin | Notes |
-|--------|-----|-------|
-| Spindle on/off | _[ ]_ | Drives FOTEK SSR-25 DA or 2PDT relay |
-| Spindle PWM | _[ ]_ | 0–10V analog to VFD VI terminal |
+### Charge Pump
+- Charge pump is enabled (always on) — G540 requires 10–100kHz signal on Pin 14
+  to enable stepper outputs. Generated automatically by Mach3.
 
 ---
 
 ## Stepper Motors
 
-| Axis | Motor Model | Current (A) | Current Set Resistor |
-|------|-------------|-------------|----------------------|
-| X | _[ ]_ | _[ ]_ A | _[ ]_ Ω |
-| Y | _[ ]_ | _[ ]_ A | _[ ]_ Ω |
-| Z | _[ ]_ | _[ ]_ A | _[ ]_ Ω |
-| A | _[ ]_ | _[ ]_ A | _[ ]_ Ω |
-
-> 60mm fans mounted near each stepper for cooling — 12V, controlled via optocoupler/MOSFET circuit (see [Upgrades](../Upgrades/))
+| Axis | Motor | Current (A) | G540 Current Set Resistor |
+|------|-------|-------------|--------------------------|
+| X | _[model]_ | _[ ]_ | _[ ]_ Ω |
+| Y | _[model]_ | _[ ]_ | _[ ]_ Ω |
+| Z | _[model]_ | _[ ]_ | _[ ]_ Ω |
+| A | _[model]_ | _[ ]_ | _[ ]_ Ω |
 
 ---
 
-## Spindle & VFD — Huanyang HY02D223B
+## Spindle & VFD Wiring
 
-- Input: Single phase 240V (connected to R + S terminals — for 220V class, single phase uses any two phases of R, S, T)
-- Output: Three phase 0–400Hz to spindle U, V, W terminals
-- Control mode: V/F (SPWM)
-- Speed reference: 0–10V analog via VI terminal
+- VFD model: Huanyang HY02D223B
+- Spindle: 2.2kW water-cooled, ER20 collet, 24,000 RPM max
+- Speed control: PWM from G540 → 0–10V analog signal to VFD VI terminal
+- Spindle on/off: G540 Pin 17 → relay → VFD FOR terminal
 
-### Main Circuit Terminals
-
-| Terminal | Function | Connected To |
-|----------|----------|-------------|
-| R, S | AC input (single phase 240V) | Mains via contactor |
-| U, V, W | Three phase output | Spindle motor |
-| E | Earth/ground | Earth bar |
-| P, Pr | Braking resistor | Not connected |
-
-### Control Circuit Terminals
-
-| Terminal | Function | Connected To |
-|----------|----------|-------------|
-| FOR | Forward run (Multi-Input 1) | Mach3 spindle on signal via relay |
-| DCM (COM) | Common for digital signals | GND reference |
-| VI | Analog voltage speed reference (0–10V) | Mach3 PWM → 0–10V via G540 |
-| ACM (GND) | Common for analog signals | Analog GND |
-| +10V | Internal 10V reference | _[not used / potentiometer if fitted]_ |
-
-### Key VFD Parameters (CNC Spindle Setup)
-
-These are the parameters typically set for Mach3 external control of a spindle. Record your actual values in the User Set Value column.
-
-| Parameter | Function | Recommended | Set Value |
-|-----------|----------|-------------|------------|
-| PD001 | Source of run commands | 1 (external terminal) | _[ ]_ |
-| PD002 | Source of operating frequency | 1 (external analog VI) | _[ ]_ |
-| PD003 | Main frequency | 400.00 Hz (for 24,000 RPM) | _[ ]_ |
-| PD004 | Base frequency | 400.00 Hz | _[ ]_ |
-| PD005 | Max operating frequency | 400.00 Hz | _[ ]_ |
-| PD007 | Min frequency | _[set min spindle speed]_ | _[ ]_ |
-| PD011 | Frequency lower limit | 0 | _[ ]_ |
-| PD014 | Accel time 1 | _[e.g. 5–10s]_ | _[ ]_ |
-| PD015 | Decel time 1 | _[e.g. 5–10s]_ | _[ ]_ |
-| PD023 | Rev rotation select | 0 (disabled — spindle one direction) | _[ ]_ |
-| PD070 | Analog input type | 0 (0–10V) | _[ ]_ |
-| PD141 | Rated motor voltage | 220 | _[ ]_ |
-| PD142 | Rated motor current | _[from spindle nameplate]_ | _[ ]_ |
-| PD143 | Motor pole number | 2 (for high-speed spindle) | _[ ]_ |
-| PD144 | Rated motor revolution | 24000 | _[ ]_ |
-
-> Full parameter list in the VFD manual: [HY02D223B-VFD-MANUAL.pdf](../Manuals/)
+| VFD Terminal | Function | Connected To |
+|-------------|----------|-------------|
+| FOR | Forward run | 2PDT relay (coil driven by G540 Pin 17) |
+| DCM | Digital common | Relay common |
+| VI | Speed reference (0–10V) | G540 analog out |
+| ACM | Analog GND | G540 GND |
+| R, S | AC input | 240V single phase (via contactor) |
+| U, V, W | 3-phase output | Spindle |
 
 ---
 
 ## Limit & Home Switches
 
-- Type: Inductive
-- Quantity: 4
-- Configuration: 
-- Power: 24V DC (from LM2596HVS buck converter)
-
----
-
-## Relay Functions
-
-| Relay | Type | Function |
-|-------|------|---------|
-| FOTEK SSR-25 DA | Solid state, 25A |  |
-| 2PDT 5A 24V coil | Mechanical |  |
-
----
-
-## Cooling Fans
-
-| Fan | Size | Voltage | Location | Control |
-|-----|------|---------|----------|---------|
-| Enclosure fan x2 | 120mm | 12V | Control enclosure | _[direct / thermostat]_ |
-| Stepper fan x3 | 60mm | 12V | Near each stepper | Optocoupler/MOSFET circuit (upgrade in progress) |
+- Type: Inductive (NPN/PNP — _[confirm]_)
+- Configuration: Normally closed, wired in series into G540 Pin 10 fault line
+- All four switches share Pin 10 — individual axis identification is not possible
+  in hardware; Mach3 uses homing sequence to infer position
 
 ---
 
 ## Wiring Diagrams / Photos
 
-
-![Wiring](../Images/XYZ-CNCWiringDiagram.png)
-
+![Wiring Diagram](../Images/XYZ-CNCWiringDiagram.png)
 
 ---
 

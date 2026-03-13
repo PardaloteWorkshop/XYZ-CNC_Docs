@@ -10,6 +10,8 @@ operation and maintenance.
 
 ---
 
+![Image1](Images/XYZ-CNCimage01.jpg)
+
 ## Machine Overview
 
 | Spec | Detail |

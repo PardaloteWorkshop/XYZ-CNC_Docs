@@ -6,7 +6,7 @@ Australian-made CNC router kit, now discontinued. This repo documents the machin
 
 ---
 
-![CNC](../Images/XYZ-CNCimage01.jpg)
+![Image01](../Images/XYZ-CNCimage01.jpg)
 
 ## Machine Overview
 

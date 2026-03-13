@@ -1,4 +1,4 @@
-# Wiring Overview new
+# Wiring Overview
 
 ## Components
 

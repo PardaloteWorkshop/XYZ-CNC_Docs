@@ -19,7 +19,7 @@ operation and maintenance.
 | Machine | XYZ-CNC Router Kit |
 | Origin | Melbourne, Australia |
 | Acquired | March 2025 |
-| Age at acquisition | ~12 years |
+| Year built | 2016 |
 | Frame | 100×50×3mm steel tubing |
 | Bed size (X × Y) | 2640mm × 1250mm |
 | Z travel | 150mm |

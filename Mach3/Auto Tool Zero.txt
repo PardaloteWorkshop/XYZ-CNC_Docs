@@ -1,0 +1,3 @@
+CurrentFeed = GetOemDRO(818) 'Get the current feedrate to return to later
+CurrentAbsInc = GetOemLED(48) 'Get the current G90/G91 state
+CurrentGmode = GetOemDRO(819) 'Get the current G0/G1 state 

@@ -11,7 +11,7 @@ Reference manuals and datasheets for all major components.
 | [G540-MANUAL-REV8.pdf](./G540-MANUAL-REV8.pdf) | Gecko G540 4-axis stepper driver — Rev 8 |
 | [HY02D223B-VFD-MANUAL.pdf](./HY02D223B-VFD-MANUAL.pdf) | Huanyang HY02D223B VFD manual |
 | [UC400ETH_manual.pdf](./UC400ETH_manual.pdf) | CNCdrive UC400ETH motion controller — for planned upgrade |
-| Homann Designs EN-010 — CC-01 G540 Stepper Controller Kit Wiring Rev 8.4 | The XYZ-CNC wiring follows this reference design. See https://www.homanndesigns.com |
+| Homann Designs EN-010 — CC-01 G540 Stepper Controller Kit Wiring Rev 8.4 | The XYZ-CNC wiring follows this reference design. See [https://www.homanndesigns.com](https://www.homanndesigns.com/pdfs/EN010_V8.pdf) |
 
 
 

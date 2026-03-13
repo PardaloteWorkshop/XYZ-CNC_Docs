@@ -63,8 +63,9 @@ the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 | 1 | Output 8 | _(unused)_ | Flood output — not connected |
 
 ### Charge Pump
-- Charge pump is enabled (always on) — G540 requires 10–100kHz signal on Pin 14
-  to enable stepper outputs. Generated automatically by Mach3.
+- G540 charge pump DIP switch: **disabled** — stepper outputs enabled without
+  requiring a charge pump signal on Pin 14
+- Mach3 profile has ChargeAlwaysOn=1 but the G540 does not require it
 
 ---
 

@@ -103,8 +103,6 @@ Soft limits are currently **disabled** in the profile, but limits are configured
 | Y | 0 | 1240 |
 | Z | −150 | 0 |
 
-> X and Y match the machine bed dimensions (2640 × 1250 mm).
-
 ---
 
 ## Homing

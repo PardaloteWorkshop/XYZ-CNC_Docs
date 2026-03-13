@@ -16,7 +16,7 @@ Reference manuals and datasheets for all major components.
 
 - **Homann Designs EN-010** — CC-01 G540 Stepper Controller Kit Wiring Rev 8.4
   The XYZ-CNC wiring follows this reference design.
-  https://www.homanndesigns.com
+ https://www.homanndesigns.com/pdfs/EN010_V8.pdf
 
 ---
 
@@ -64,7 +64,7 @@ Reference manuals and datasheets for all major components.
 ## External Links
 
 - Gecko G540 support: https://www.geckodrive.com/support
-- Homann Designs: https://www.homanndesigns.com
+- Homann Designs: [https://www.homanndesigns.com](https://www.homanndesigns.com/pdfs/EN010_V8.pdf)
 - XYZ-CNC archived site: https://web.archive.org/web/20220307203536/https://xyz-cnc.com/
 
 ---

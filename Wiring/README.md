@@ -179,7 +179,7 @@ These are the parameters typically set for Mach3 external control of a spindle. 
 ## Wiring Diagrams / Photos
 
 
-![Wiring](Images/XYZ-CNCWiringDiagram.png)
+![Wiring](../Images/XYZ-CNCWiringDiagram.png)
 
 
 ---

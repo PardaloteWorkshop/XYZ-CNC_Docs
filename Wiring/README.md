@@ -71,12 +71,17 @@ the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 
 ## Stepper Motors
 
-| Axis | Motor | Current (A) | G540 Current Set Resistor |
-|------|-------|-------------|--------------------------|
-| X | _[model]_ | _[ ]_ | _[ ]_ Ω |
-| Y | _[model]_ | _[ ]_ | _[ ]_ Ω |
-| Z | _[model]_ | _[ ]_ | _[ ]_ Ω |
-| A | _[model]_ | _[ ]_ | _[ ]_ Ω |
+**Model: Wantai 57BYGH633** (all four axes)
+
+| Axis | Current (A) | G540 Current Set Resistor |
+|------|-------------|--------------------------|
+| X    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
+| Y    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
+| Z    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
+| A    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
+
+> Verify actual fitted resistor values against G540 board — may have been
+> tuned differently. 6-wire motors wired as 4-wire bipolar (ignore centre taps).
 
 ---
 

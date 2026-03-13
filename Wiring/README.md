@@ -23,6 +23,12 @@
 
 ---
 
+## Wiring Diagram
+
+![Wiring Diagram](../Images/XYZ-CNCWiringDiagram.png)
+
+---
+
 ## Gecko G540 — Parallel Port Pin Assignment
 
 The G540 uses a DB25 parallel port connection. Pin assignments are confirmed from
@@ -109,12 +115,6 @@ the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 - Configuration: Normally closed, wired in series into G540 Pin 10 fault line
 - All four switches share Pin 10 — individual axis identification is not possible
   in hardware; Mach3 uses homing sequence to infer position
-
----
-
-## Wiring Diagrams / Photos
-
-![Wiring Diagram](../Images/XYZ-CNCWiringDiagram.png)
 
 ---
 

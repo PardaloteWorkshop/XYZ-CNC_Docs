@@ -1,11 +1,12 @@
-# Wiring Overview
+# Wiring Overview new
 
 ## Components
-- 48V 8.3A Power Supply (set to 40.5V)
-- 2.2kW Huanyang HY02D223B VFD
-- 2.2kW Water-cooled spindle
+
+- 48V 8.3A power supply (set to 40.5V)
+- Huanyang HY02D223B 2.2kW VFD
+- 2.2kW water-cooled spindle
 - Gecko G540 4-axis stepper driver
-- NEMA23 stepper motors ×4
+- Wantai 57BYGH633 NEMA23 stepper motors ×4
 - LM2596HVS DC-DC converter (set to 12V)
 - LM2596HVS DC-DC converter (set to 24V)
 - FOTEK SSR-25 DA solid state relay
@@ -13,7 +14,7 @@
 - Yunpen EMI filter YG10T5
 - 240V contactor
 - Inductive limit/home switches ×4
-- 12V 120mm fans ×2 (enclosure)
+- 12V 120mm fans ×2 (enclosure cooling)
 - 12V 60mm fans ×3 (stepper cooling)
 - E-Stop switches ×2
 - Magnetic 240V power switch
@@ -27,14 +28,14 @@
 
 ![Wiring Diagram](../Images/XYZ-CNCWiringDiagram.png)
 
----
+---				 
 
 ## Gecko G540 — Parallel Port Pin Assignment
 
-The G540 uses a DB25 parallel port connection. Pin assignments are confirmed from
-the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
+Pin assignments confirmed from Mach3 profile
+([Mach3/XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 
-### Motor Step/Dir Outputs (DB25 Pins 2–9)
+### Motor Step/Dir Outputs
 
 | DB25 Pin | Signal | Notes |
 |----------|--------|-------|
@@ -44,34 +45,42 @@ the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 | 5 | Y Dir | |
 | 6 | Z Step | |
 | 7 | Z Dir | |
-| 8 | A Step | A slaved to X — second X gantry motor |
+| 8 | A Step | Slaved to X — second gantry motor |
 | 9 | A Dir | |
 
 ### Input Signals
 
-| DB25 Pin | Mach3 Signal | Active | Notes |
-|----------|-------------|--------|-------|
-| 10 | E-Stop / Limits | Low | G540 fault input — e-stops and limit switches wired into this line |
+| DB25 Pin | Signal | Active | Notes |
+|----------|--------|--------|-------|
+| 10 | E-Stop / Limits | Low | G540 fault input — e-stops and limit/home switches wired in series into this line |
 | 11 | _[confirm]_ | Low | |
 | 12 | _[confirm]_ | Low | |
 | 13 | _[confirm]_ | Low | |
-| 15 | Probe (Z zero) | **High** | Touch plate / tool length sensor |
+| 15 | Probe (Z zero) | **High** | Touch plate — note opposite polarity to all other inputs |
 
-> Pin 10 is the G540's combined fault input. E-stop switches and limit/home switches
-> are wired in series into this single line. The G540 halts all motion on any fault.
+> Pin 10 is the G540's combined fault input. Any break in the series circuit
+> (e-stop pressed, limit triggered) halts all motion immediately.
 
 ### Output Signals
 
-| DB25 Pin | Mach3 Output | Signal | Notes |
-|----------|-------------|--------|-------|
-| 16 | Output 13 | _[confirm]_ | |
-| 17 | Output 7 | Spindle on/off | Drives relay → VFD FOR terminal |
-| 1 | Output 8 | _(unused)_ | Flood output — not connected |
+| DB25 Pin | Signal | Notes |
+|----------|--------|-------|
+								  
+| 17 | Spindle on/off | Drives 2PDT relay → VFD FOR terminal |
+| 1 | _(unused)_ | Flood output in Mach3 — not connected |
+| 16 | _[confirm]_ | |
+| 14 | Charge pump | G540 charge pump DIP switch **disabled** on this machine — signal output by Mach3 but ignored by G540 |
 
-### Charge Pump
-- G540 charge pump DIP switch: **disabled** — stepper outputs enabled without
-  requiring a charge pump signal on Pin 14
-- Mach3 profile has ChargeAlwaysOn=1 but the G540 does not require it
+### Analog Speed Output (G540 → VFD)
+																			   
+										  
+																	 
+
+| G540 Terminal | VFD Terminal | Signal |
+|--------------|-------------|--------|
+| +10V | VR | 10V reference |
+| Vout | VI | 0–10V analog speed signal |
+| AGnd | ACM | Analog ground |
 
 ---
 
@@ -81,40 +90,61 @@ the Mach3 profile ([XYZ-CNC.XML](../Mach3/XYZ-CNC.XML)).
 
 | Axis | Current (A) | G540 Current Set Resistor |
 |------|-------------|--------------------------|
-| X    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
-| Y    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
-| Z    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
-| A    | 3A          | 2.2kΩ (calc: 2.1kΩ)      |
+| X | 3A | 2.2kΩ (calc: 2.1kΩ) |
+| Y | 3A | 2.2kΩ (calc: 2.1kΩ) |
+| Z | 3A | 2.2kΩ (calc: 2.1kΩ) |
+| A | 3A | 2.2kΩ (calc: 2.1kΩ) |
 
-> Verify actual fitted resistor values against G540 board — may have been
-> tuned differently. 6-wire motors wired as 4-wire bipolar (ignore centre taps).
+> Motors are 6-wire — connected as 4-wire bipolar. Centre tap wires unused.
+> Verify fitted resistor values against G540 board.
 
 ---
 
 ## Spindle & VFD Wiring
 
-- VFD model: Huanyang HY02D223B
-- Spindle: 2.2kW water-cooled, ER20 collet, 24,000 RPM max
-- Speed control: PWM from G540 → 0–10V analog signal to VFD VI terminal
-- Spindle on/off: G540 Pin 17 → relay → VFD FOR terminal
+| Spec | Detail |
+|------|--------|
+| VFD | Huanyang HY02D223B |
+| Spindle | 2.2kW water-cooled, ER20, 24,000 RPM max |
+| Speed control | 0–10V analog from G540 Vout → VFD VI terminal |
+| On/off control | G540 Pin 17 → 2PDT relay → VFD FOR/DCM terminals |
+
+### VFD Terminal Connections
 
 | VFD Terminal | Function | Connected To |
 |-------------|----------|-------------|
-| FOR | Forward run | 2PDT relay (coil driven by G540 Pin 17) |
-| DCM | Digital common | Relay common |
-| VI | Speed reference (0–10V) | G540 analog out |
-| ACM | Analog GND | G540 GND |
-| R, S | AC input | 240V single phase (via contactor) |
+															   
+									   
+													
+							   
+| R, S | AC input (single phase) | 240V via contactor |
 | U, V, W | 3-phase output | Spindle |
+| VR | +10V reference input | G540 +10V |
+| VI | Analog speed (0–10V) | G540 Vout |
+| ACM | Analog GND | G540 AGnd |
+| FOR | Forward run | 2PDT relay NO contact |
+| DCM | Digital common | 2PDT relay common |
+
+### Key VFD Parameters
+
+| Parameter | Function | Setting |
+|-----------|----------|---------|
+| PD001 | Run command source | 1 (external terminal) |
+| PD002 | Frequency source | 1 (analog VI) |
+| PD003/004/005 | Main/base/max frequency | 400Hz |
+| PD070 | Analog input type | 0 (0–10V) |
+| PD141 | Rated motor voltage | 220 |
+| PD143 | Motor poles | 2 |
+| PD144 | Rated RPM | 24000 |
 
 ---
 
 ## Limit & Home Switches
 
-- Type: Inductive (NPN/PNP — _[confirm]_)
+- Type: Inductive — NPN/PNP _[confirm]_
 - Configuration: Normally closed, wired in series into G540 Pin 10 fault line
-- All four switches share Pin 10 — individual axis identification is not possible
-  in hardware; Mach3 uses homing sequence to infer position
+- All switches share Pin 10 — individual axis identification not possible in hardware
+- Mach3 uses homing sequence to determine position on startup
 
 ---
 

@@ -36,3 +36,5 @@ Australian-made CNC router kit, now discontinued. This repo documents the machin
 - [Mach3](./Mach3/) — motor tuning, settings, profiles, XML backup
 - [Manuals](./Manuals/) — original kit manuals, VFD manual, Gecko G540 docs
 - [Upgrades](./Upgrades/) — modifications and improvements made to the machine
+- [Images](./Images/) — Collection from archived website and of build
+

@@ -20,7 +20,7 @@ operation and maintenance.
 | Origin | Melbourne, Australia |
 | Acquired | March 2025 |
 | Year built | 2016 |
-| Frame | 100×50×3mm steel tubing |
+| Frame | 100 × 50 × 3mm steel tubing |
 | Bed size (X × Y) | 2640mm × 1250mm |
 | Z travel | 150mm |
 
